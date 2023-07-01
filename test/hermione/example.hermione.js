@@ -35,20 +35,19 @@ describe("Проверка содержимого страниц", async functio
     });
     console.log("end");
   });
-  // it("/catalog", async function ({ browser }) {
-  //   const puppeteer = await browser.getPuppeteer();
-  //   const [page] = await puppeteer.pages();
-  //   await page.goto("http://localhost:3000/hw/store/catalog");
-  //   await page.waitForSelector("h1", { timeout: 2000 });
-  //   const element = await page.$('h1');
-  //   const text = await element.textContent()
-  //   assert.equal(text, "Catalog");
-  //   // await browser.assertView("plain", ".Application", {
-  //   //   screenshotDelay: 500,
-  //   //   ignoreElements: [".row",".Image", ".ProductItem-Name", ".ProductItem-Price"],
-  //   // });
-  //   console.log("end");
-  // });
+  it("/catalog", async function ({ browser }) {
+    const puppeteer = await browser.getPuppeteer();
+    const [page] = await puppeteer.pages();
+    await page.goto("http://localhost:3000/hw/store/catalog");
+    await page.waitForSelector("h1", { timeout: 2000 });
+    const text = await this.browser.$("h1").getText();
+    assert.equal(text, "Catalog");
+    // await browser.assertView("plain", ".Application", {
+    //   screenshotDelay: 500,
+    //   ignoreElements: [".row",".Image", ".ProductItem-Name", ".ProductItem-Price"],
+    // });
+    console.log("end");
+  });
   it("/delivery", async function ({ browser }) {
     const puppeteer = await browser.getPuppeteer();
     const [page] = await puppeteer.pages();
@@ -91,7 +90,7 @@ describe("Проверка содержимого страниц", async functio
   //   console.log("end");
   // });
 });
-describe("тестирование", async function () {
+describe("тестирование общих требований", async function () {
   // const puppeteer = await browser.getPuppeteer();
   // const [page] = await puppeteer.pages();
   // await page.goto("http://localhost:3000/hw/store");
@@ -167,6 +166,89 @@ describe("тестирование", async function () {
     await page.click(".nav-link");
     await page.waitForSelector(".navbar", { timeout: 2000 });
     await browser.assertView("navbar", ".navbar");
+    console.log("end");
+  });
+});
+
+describe("тестирование каталог", async function () {
+  beforeEach(async ({ browser, currentTest, opts }) => {
+    await browser.setWindowSize(1920, 1080);
+    await browser.url(`http://localhost:3000/hw/store/catalog`);
+  });
+  it("В каталоге отображаются пришедшие с сервера товары", async function ({ browser }) {
+    const puppeteer = await browser.getPuppeteer();
+    const [page] = await puppeteer.pages();
+    const productListSelector = ".row";
+    await page.waitForSelector(productListSelector);
+    const productList = await page.$$(productListSelector);
+    assert.ok(productList.length > 0);
+    console.log("end");
+  });
+  it("на странице с подробной информацией отображаются: название товара, его описание, цена, цвет, материал и кнопка * * 'добавить в корзину'", async function ({
+    browser,
+  }) {
+    const puppeteer = await browser.getPuppeteer();
+    const [page] = await puppeteer.pages();
+    await page.goto("http://localhost:3000/hw/store/catalog/0");
+    await page.waitForSelector(".Application", { timeout: 2000 });
+    await browser.assertView("plain", ".Application", {
+      screenshotDelay: 10,
+      ignoreElements: [".Image", ".ProductDetails-Name", ".ProductDetails-Price", ".ProductDetails-Description", "dd"],
+    });
+    console.log("end");
+  });
+  it("если товар уже добавлен в корзину, в каталоге и на странице товара должно отображаться сообщение об этом", async function ({
+    browser,
+  }) {
+    const puppeteer = await browser.getPuppeteer();
+    const [page] = await puppeteer.pages();
+    await page.goto("http://localhost:3000/hw/store/catalog/0");
+    await page.waitForSelector(".ProductDetails-AddToCart", { timeout: 2000 });
+    await page.click(".ProductDetails-AddToCart");
+    await page.click(".ProductDetails-AddToCart");
+    await page.click(".ProductDetails-AddToCart");
+    await page.waitForSelector(".CartBadge", { timeout: 2000 });
+    await browser.assertView("navbar", ".navbar");
+    await browser.assertView("information_about_add_item", ".CartBadge");
+    await browser.assertView("plain", ".Application", {
+      screenshotDelay: 10,
+      ignoreElements: [".Image", ".ProductDetails-Name", ".ProductDetails-Price", ".ProductDetails-Description", "dd"],
+    });
+    console.log("end");
+  });
+  it("если товар уже добавлен в корзину, повторное нажатие кнопки 'добавить в корзину' должно увеличивать его количество", async function ({
+    browser,
+  }) {
+    const puppeteer = await browser.getPuppeteer();
+    const [page] = await puppeteer.pages();
+    await page.goto("http://localhost:3000/hw/store/catalog/0");
+    await page.waitForSelector(".ProductDetails-AddToCart", { timeout: 2000 });
+    await page.click(".ProductDetails-AddToCart");
+    await page.goto("http://localhost:3000/hw/store/catalog/1");
+    await page.waitForSelector(".ProductDetails-AddToCart", { timeout: 2000 });
+    await page.click(".ProductDetails-AddToCart");
+    await page.waitForSelector(".Application", { timeout: 2000 });
+    await browser.assertView("plain", ".Application", {
+      screenshotDelay: 10,
+      ignoreElements: [".Image", ".ProductDetails-Name", ".ProductDetails-Price", ".ProductDetails-Description", "dd"],
+    });
+    console.log("end");
+  });
+  it("содержимое корзины должно сохраняться между перезагрузками страницы", async function ({ browser }) {
+    const puppeteer = await browser.getPuppeteer();
+    const [page] = await puppeteer.pages();
+    await page.reload();
+    await page.goto("http://localhost:3000/hw/store/catalog/0");
+    await page.waitForSelector(".ProductDetails-AddToCart", { timeout: 2000 });
+    await page.click(".ProductDetails-AddToCart");
+    await page.goto("http://localhost:3000/hw/store/catalog/1");
+    await page.waitForSelector(".ProductDetails-AddToCart", { timeout: 2000 });
+    await page.click(".ProductDetails-AddToCart");
+    await page.reload();
+    await page.waitForSelector(".navbar", { timeout: 2000 });
+    await browser.assertView("plain", ".navbar", {
+      screenshotDelay: 10,
+    });
     console.log("end");
   });
 });
