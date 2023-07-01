@@ -252,3 +252,78 @@ describe("тестирование каталог", async function () {
     console.log("end");
   });
 });
+
+describe("тестирование корзины", async function () {
+  beforeEach(async ({ browser, currentTest, opts }) => {
+    await browser.setWindowSize(1920, 1080);
+    await page.goto("http://localhost:3000/hw/store/catalog/0");
+    await page.waitForSelector(".ProductDetails-AddToCart", { timeout: 2000 });
+    await page.click(".ProductDetails-AddToCart");
+    await page.goto("http://localhost:3000/hw/store/catalog/1");
+    await page.waitForSelector(".ProductDetails-AddToCart", { timeout: 2000 });
+    await page.click(".ProductDetails-AddToCart");
+    await page.goto("http://localhost:3000/hw/store/cart");
+    await page.waitForSelector(".navbar", { timeout: 2000 });
+    await browser.assertView("plain", ".navbar", {
+      screenshotDelay: 10,
+    });
+  });
+  it("в шапке рядом со ссылкой на корзину должно отображаться количество не повторяющихся товаров в ней", async function ({ browser }) {
+    const puppeteer = await browser.getPuppeteer();
+    const [page] = await puppeteer.pages();
+    await page.waitForSelector(".navbar", { timeout: 2000 });
+    await browser.assertView("plain", ".navbar", {
+      screenshotDelay: 10,
+    });
+    console.log("end");
+  });
+  it("в корзине должна отображаться таблица с добавленными в нее товарами", async function ({ browser }) {
+    const puppeteer = await browser.getPuppeteer();
+    const [page] = await puppeteer.pages();
+    
+    await page.waitForSelector(".col", { timeout: 2000 });
+    await browser.assertView("table", ".col", {
+      screenshotDelay: 10,
+      ignoreElements: [".Cart-Name", ".Cart-Price", ".Cart-Total", ".Cart-OrderPrice"],
+    });
+    console.log("end");
+  });
+  it("для каждого товара должны отображаться название, цена, количество , стоимость, а также должна отображаться общая сумма заказа", async function ({ browser }) {
+    const puppeteer = await browser.getPuppeteer();
+    const [page] = await puppeteer.pages();
+    await page.waitForSelector(".col", { timeout: 2000 });
+    const nameSelector = ".Cart-Name";
+    const priceSelector = ".Cart-Price";
+    const totalSelector = ".Cart-Total";
+    const orderSelector = ".Cart-OrderPrice"
+
+    const firstSelector = ".tbody:first-child"
+    // await page.waitForSelector(productListSelector);
+    const nameFirst = await this.browser.$(` ${nameSelector}`).getText();
+    const priceFirst = await this.browser.$(` ${priceSelector}`).getText();
+    const totalFirst = await this.browser.$(`${totalSelector}`).getText();
+    const totalSecond = await this.browser.$(` ${totalSelector}`).getText();
+
+    const order = await this.browser.$(orderSelector).getText();
+
+    assert.ok(nameFirst.length > 0);
+    assert.ok(priceFirst.length > 0);
+    assert.ok(totalFirst.length > 0);
+    assert.ok(order.length > 0);
+    assert.ok(+order === +totalFirst+totalSecond);
+    console.log("end");
+  });
+  it("в корзине должна быть кнопка 'очистить корзину', по нажатию на которую все товары должны удаляться", async function ({ browser }) {
+    const puppeteer = await browser.getPuppeteer();
+    const [page] = await puppeteer.pages();
+    
+    console.log("end");
+  });
+  it("если корзина пустая, должна отображаться ссылка на каталог товаров", async function ({ browser }) {
+    const puppeteer = await browser.getPuppeteer();
+    const [page] = await puppeteer.pages();
+    
+    console.log("end");
+  });
+  
+});
