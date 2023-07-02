@@ -230,11 +230,11 @@ describe("тестирование каталог", async function () {
     assert.ok(colorText.length > 0);
     assert.ok(materialText.length > 0);
 
-    await page.$eval(nameSelector, element => element.textContent = 'Тест');
-    await page.$eval(priceSelector, element => element.textContent = 'Тест');
-    await page.$eval(descriptionSelector, element => element.textContent = 'Тест');
-    await page.$eval(colorSelector, element => element.textContent = 'Тест');
-    await page.$eval(materialSelector, element => element.textContent = 'Тест');
+    await page.$eval(nameSelector, (element) => (element.textContent = "Тест"));
+    await page.$eval(priceSelector, (element) => (element.textContent = "Тест"));
+    await page.$eval(descriptionSelector, (element) => (element.textContent = "Тест"));
+    await page.$eval(colorSelector, (element) => (element.textContent = "Тест"));
+    await page.$eval(materialSelector, (element) => (element.textContent = "Тест"));
     await browser.assertView("Application", ".Application", {
       screenshotDelay: 100,
     });
@@ -254,6 +254,11 @@ describe("тестирование каталог", async function () {
     await browser.assertView("navbar", ".navbar", {
       screenshotDelay: 100,
     });
+    await browser.assertView("information_about_add_item", ".CartBadge", {
+      screenshotDelay: 100,
+    });
+    await page.goto("http://localhost:3000/hw/store/catalog/");
+    await page.waitForSelector(".CartBadge", { timeout: 2000 });
     await browser.assertView("information_about_add_item", ".CartBadge", {
       screenshotDelay: 100,
     });
@@ -329,7 +334,7 @@ describe("тестирование корзины", async function () {
     const priceSelector = ".Cart-Price";
     const totalSelector = ".Cart-Total";
     const orderSelector = ".Cart-OrderPrice";
-    const countSelector = ".Cart-Count"
+    const countSelector = ".Cart-Count";
 
     const firstSelector = "tbody tr:first-child";
     const secondSelector = "tbody tr:nth-child(2)";
@@ -346,17 +351,15 @@ describe("тестирование корзины", async function () {
     const order = await this.browser.$(orderSelector).getText();
     const valueOrder = order.slice(1);
 
-
-
-    await page.$eval(`${firstSelector} ${nameSelector}`, element => element.textContent = 'Тест');
-    await page.$eval(`${firstSelector} ${priceSelector}`, element => element.textContent = '$Тест');
-    await page.$eval(`${firstSelector} ${totalSelector}`, element => element.textContent = '$Тест');
-    await page.$eval(`${firstSelector} ${countSelector}`, element => element.textContent = '1');
-    await page.$eval(`${secondSelector} ${nameSelector}`, element => element.textContent = 'Тест');
-    await page.$eval(`${secondSelector} ${priceSelector}`, element => element.textContent = '$Тест');
-    await page.$eval(`${secondSelector} ${totalSelector}`, element => element.textContent = '$Тест');
-    await page.$eval(`${secondSelector} ${countSelector}`, element => element.textContent = '1');
-    await page.$eval(`${orderSelector}`, element => element.textContent = '$Тест');
+    await page.$eval(`${firstSelector} ${nameSelector}`, (element) => (element.textContent = "Тест"));
+    await page.$eval(`${firstSelector} ${priceSelector}`, (element) => (element.textContent = "$Тест"));
+    await page.$eval(`${firstSelector} ${totalSelector}`, (element) => (element.textContent = "$Тест"));
+    await page.$eval(`${firstSelector} ${countSelector}`, (element) => (element.textContent = "1"));
+    await page.$eval(`${secondSelector} ${nameSelector}`, (element) => (element.textContent = "Тест"));
+    await page.$eval(`${secondSelector} ${priceSelector}`, (element) => (element.textContent = "$Тест"));
+    await page.$eval(`${secondSelector} ${totalSelector}`, (element) => (element.textContent = "$Тест"));
+    await page.$eval(`${secondSelector} ${countSelector}`, (element) => (element.textContent = "1"));
+    await page.$eval(`${orderSelector}`, (element) => (element.textContent = "$Тест"));
 
     await browser.assertView("table", ".col", {
       screenshotDelay: 10,
@@ -367,7 +370,6 @@ describe("тестирование корзины", async function () {
   it("для каждого товара должны отображаться название, цена, количество , стоимость, а также должна отображаться общая сумма заказа", async function ({
     browser,
   }) {
-
     const puppeteer = await browser.getPuppeteer();
     const [page] = await puppeteer.pages();
     await page.waitForSelector(".col", { timeout: 2000 });
@@ -426,5 +428,90 @@ describe("тестирование корзины", async function () {
     });
     assert.ok(link);
     console.log("end");
+  });
+});
+describe("тестирование формы заказа", async function () {
+  beforeEach(async ({ browser, currentTest, opts }) => {
+    await browser.setWindowSize(1920, 1080);
+    const puppeteer = await browser.getPuppeteer();
+    const [page] = await puppeteer.pages();
+    await page.goto("http://localhost:3000/hw/store/catalog/0");
+    await page.waitForSelector(".ProductDetails-AddToCart", { timeout: 2000 });
+    await page.click(".ProductDetails-AddToCart");
+    await page.goto("http://localhost:3000/hw/store/catalog/1");
+    await page.waitForSelector(".ProductDetails-AddToCart", { timeout: 2000 });
+    await page.click(".ProductDetails-AddToCart");
+    await page.goto("http://localhost:3000/hw/store/cart");
+  });
+  it("верстка формы для заполнения", async function ({ browser }) {
+    const puppeteer = await browser.getPuppeteer();
+    const [page] = await puppeteer.pages();
+    await page.waitForSelector(".col-12", { timeout: 2000 });
+    await browser.assertView("form", ".col-12", {
+      screenshotDelay: 100,
+    });
+  });
+  it("проверка валидации формы", async function ({ browser }) {
+    const puppeteer = await browser.getPuppeteer();
+    const [page] = await puppeteer.pages();
+    await page.waitForSelector(".col-12", { timeout: 2000 });
+    await page.click(".Form-Submit");
+    await page.waitForSelector(".invalid-feedback", { timeout: 2000 });
+    await browser.assertView("error-form all", ".col-12", {
+      screenshotDelay: 100,
+    });
+    const nameInput = await page.$("#f-name");
+    await nameInput.focus();
+    await page.type('#f-name', '8');
+    // await nameInput.fill("8");
+
+    const phoneInput = await page.$("#f-phone");
+    await phoneInput.focus();
+    await page.type('#f-phone', '8');
+
+    // await phoneInput.fill("8");
+    
+    const addressInput = await page.$("#f-address");
+    await addressInput.focus();
+    await page.type('#f-address', '8');
+
+    await page.click(".Form-Submit");
+    await page.waitForSelector(".invalid-feedback", { timeout: 2000 });
+    await browser.assertView("error-form phone", ".col-12", {
+      screenshotDelay: 100,
+    });
+  });
+  it("после  завершения заказа по клику на кнопку появляется банер well done", async function ({ browser }) {
+    const puppeteer = await browser.getPuppeteer();
+    const [page] = await puppeteer.pages();
+    await page.waitForSelector(".col-12", { timeout: 2000 });
+
+    const nameInput = await page.$("#f-name");
+    await nameInput.focus();
+    await page.type('#f-name', '8');
+    // await nameInput.fill("8");
+
+    const phoneInput = await page.$("#f-phone");
+    await phoneInput.focus();
+    await page.type('#f-phone', '89819040053');
+
+    // await phoneInput.fill("89819040053");
+    
+    const addressInput = await page.$("#f-address");
+    await addressInput.focus();
+    await page.type('#f-address', '8');
+    // await addressInput.fill( "8");
+
+    await page.click(".Form-Submit");
+    await page.waitForSelector(".col-12", { timeout: 2000 });
+    await browser.assertView("well done", ".col-12", {
+      screenshotDelay: 100,
+      ignoreElements: [".Cart-Number"],
+    });
+    const link = await page.$('.col a[href="/hw/store/catalog"]');
+    await browser.assertView("href", ".col a", {
+      screenshotDelay: 100,
+    });
+    assert.ok(link);
   });
 });
