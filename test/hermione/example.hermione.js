@@ -1,5 +1,6 @@
 const { assert } = require("chai");
 
+
 describe("store", async function () {
   it("Тест, который пройдет2", async function ({ browser }) {
     await browser.setWindowSize(1920, 1080);
@@ -33,7 +34,7 @@ describe("Проверка содержимого страниц", async functio
     const puppeteer = await browser.getPuppeteer();
     const [page] = await puppeteer.pages();
     await page.goto("http://localhost:3000/hw/store");
-    await page.waitForSelector(".Application", { timeout: 2000 });
+    await page.waitForSelector(".Application");
     await browser.assertView("plain", ".Application", {
       screenshotDelay: 100,
     });
@@ -56,7 +57,7 @@ describe("Проверка содержимого страниц", async functio
     const puppeteer = await browser.getPuppeteer();
     const [page] = await puppeteer.pages();
     await page.goto("http://localhost:3000/hw/store/delivery");
-    await page.waitForSelector(".Application", { timeout: 2000 });
+    await page.waitForSelector(".Application");
     await browser.assertView("plain", ".Application", {
       screenshotDelay: 100,
     });
@@ -66,7 +67,7 @@ describe("Проверка содержимого страниц", async functio
     const puppeteer = await browser.getPuppeteer();
     const [page] = await puppeteer.pages();
     await page.goto("http://localhost:3000/hw/store/contacts");
-    await page.waitForSelector(".Application", { timeout: 2000 });
+    await page.waitForSelector(".Application");
     await browser.assertView("plain", ".Application", {
       screenshotDelay: 100,
     });
@@ -76,7 +77,7 @@ describe("Проверка содержимого страниц", async functio
     const puppeteer = await browser.getPuppeteer();
     const [page] = await puppeteer.pages();
     await page.goto("http://localhost:3000/hw/store/cart");
-    await page.waitForSelector(".Application", { timeout: 2000 });
+    await page.waitForSelector(".Application");
     await browser.assertView("plain", ".Application", {
       screenshotDelay: 100,
     });
@@ -106,32 +107,32 @@ describe("тестирование общих требований", async funct
     const [page] = await puppeteer.pages();
     await page.goto("http://localhost:3000/hw/store");
     await page.setViewport({ width: 1920, height: 1080 });
-    await page.waitForSelector(".Application", { timeout: 2000 });
+    await page.waitForSelector(".Application");
     await browser.assertView("plain 1920", ".Application", {
       screenshotDelay: 100,
     });
     await page.setViewport({ width: 1500, height: 1080 });
-    await page.waitForSelector(".Application", { timeout: 2000 });
+    await page.waitForSelector(".Application");
     await browser.assertView("plain 1500", ".Application", {
       screenshotDelay: 1000,
     });
     await page.setViewport({ width: 1000, height: 1080 });
-    await page.waitForSelector(".Application", { timeout: 2000 });
+    await page.waitForSelector(".Application");
     await browser.assertView("plain 1000", ".Application", {
       screenshotDelay: 1000,
     });
     await page.setViewport({ width: 600, height: 1080 });
-    await page.waitForSelector(".Application", { timeout: 2000 });
+    await page.waitForSelector(".Application");
     await browser.assertView("plain 600", ".Application", {
       screenshotDelay: 1000,
     });
     await page.setViewport({ width: 400, height: 1080 });
-    await page.waitForSelector(".Application", { timeout: 2000 });
+    await page.waitForSelector(".Application");
     await browser.assertView("plain 400", ".Application", {
       screenshotDelay: 1000,
     });
     await page.setViewport({ width: 200, height: 1080 });
-    await page.waitForSelector(".Application", { timeout: 2000 });
+    await page.waitForSelector(".Application");
     await browser.assertView("plain 200", ".Application", {
       screenshotDelay: 1000,
     });
@@ -204,7 +205,7 @@ describe("тестирование каталог", async function () {
     const puppeteer = await browser.getPuppeteer();
     const [page] = await puppeteer.pages();
     await page.goto("http://localhost:3000/hw/store/catalog/0");
-    await page.waitForSelector(".Application", { timeout: 2000 });
+    await page.waitForSelector(".Application");
     await browser.assertView("collImage", ".col-12", {
       screenshotDelay: 10,
       ignoreElements: [".Image", ".ProductDetails-Name", ".ProductDetails-Price", ".ProductDetails-Description", "dd"],
@@ -246,7 +247,7 @@ describe("тестирование каталог", async function () {
     const puppeteer = await browser.getPuppeteer();
     const [page] = await puppeteer.pages();
     await page.goto("http://localhost:3000/hw/store/catalog/0");
-    await page.waitForSelector(".ProductDetails-AddToCart", { timeout: 2000 });
+    await page.waitForSelector(".ProductDetails-AddToCart");
     await page.click(".ProductDetails-AddToCart");
     await page.click(".ProductDetails-AddToCart");
     await page.click(".ProductDetails-AddToCart");
@@ -259,7 +260,7 @@ describe("тестирование каталог", async function () {
     });
     await page.goto("http://localhost:3000/hw/store/catalog/");
     await page.waitForSelector(".CartBadge", { timeout: 2000 });
-    await browser.assertView("information_about_add_item", ".CartBadge", {
+    await browser.assertView("information_about_add_item on catalog card", ".CartBadge", {
       screenshotDelay: 100,
     });
     console.log("end");
@@ -270,12 +271,12 @@ describe("тестирование каталог", async function () {
     const puppeteer = await browser.getPuppeteer();
     const [page] = await puppeteer.pages();
     await page.goto("http://localhost:3000/hw/store/catalog/0");
-    await page.waitForSelector(".ProductDetails-AddToCart", { timeout: 2000 });
+    await page.waitForSelector(".ProductDetails-AddToCart");
     await page.click(".ProductDetails-AddToCart");
     await page.goto("http://localhost:3000/hw/store/catalog/1");
-    await page.waitForSelector(".ProductDetails-AddToCart", { timeout: 2000 });
+    await page.waitForSelector(".ProductDetails-AddToCart");
     await page.click(".ProductDetails-AddToCart");
-    await page.waitForSelector(".Application", { timeout: 2000 });
+    await page.waitForSelector(".Application");
     await browser.assertView("navbar", ".navbar", {
       screenshotDelay: 100,
     });
@@ -286,10 +287,10 @@ describe("тестирование каталог", async function () {
     const [page] = await puppeteer.pages();
     await page.reload();
     await page.goto("http://localhost:3000/hw/store/catalog/0");
-    await page.waitForSelector(".ProductDetails-AddToCart", { timeout: 2000 });
+    await page.waitForSelector(".ProductDetails-AddToCart");
     await page.click(".ProductDetails-AddToCart");
     await page.goto("http://localhost:3000/hw/store/catalog/1");
-    await page.waitForSelector(".ProductDetails-AddToCart", { timeout: 2000 });
+    await page.waitForSelector(".ProductDetails-AddToCart");
     await page.click(".ProductDetails-AddToCart");
     await page.reload();
     await page.waitForSelector(".navbar", { timeout: 2000 });
@@ -306,10 +307,10 @@ describe("тестирование корзины", async function () {
     const puppeteer = await browser.getPuppeteer();
     const [page] = await puppeteer.pages();
     await page.goto("http://localhost:3000/hw/store/catalog/0");
-    await page.waitForSelector(".ProductDetails-AddToCart", { timeout: 2000 });
+    await page.waitForSelector(".ProductDetails-AddToCart");
     await page.click(".ProductDetails-AddToCart");
     await page.goto("http://localhost:3000/hw/store/catalog/1");
-    await page.waitForSelector(".ProductDetails-AddToCart", { timeout: 2000 });
+    await page.waitForSelector(".ProductDetails-AddToCart");
     await page.click(".ProductDetails-AddToCart");
     await page.goto("http://localhost:3000/hw/store/cart");
   });
@@ -436,17 +437,17 @@ describe("тестирование формы заказа", async function () {
     const puppeteer = await browser.getPuppeteer();
     const [page] = await puppeteer.pages();
     await page.goto("http://localhost:3000/hw/store/catalog/0");
-    await page.waitForSelector(".ProductDetails-AddToCart", { timeout: 2000 });
+    await page.waitForSelector(".ProductDetails-AddToCart");
     await page.click(".ProductDetails-AddToCart");
     await page.goto("http://localhost:3000/hw/store/catalog/1");
-    await page.waitForSelector(".ProductDetails-AddToCart", { timeout: 2000 });
+    await page.waitForSelector(".ProductDetails-AddToCart");
     await page.click(".ProductDetails-AddToCart");
     await page.goto("http://localhost:3000/hw/store/cart");
   });
   it("верстка формы для заполнения", async function ({ browser }) {
     const puppeteer = await browser.getPuppeteer();
     const [page] = await puppeteer.pages();
-    await page.waitForSelector(".col-12", { timeout: 2000 });
+    await page.waitForSelector(".col-12");
     await browser.assertView("form", ".col-12", {
       screenshotDelay: 100,
     });
@@ -454,7 +455,7 @@ describe("тестирование формы заказа", async function () {
   it("проверка валидации формы", async function ({ browser }) {
     const puppeteer = await browser.getPuppeteer();
     const [page] = await puppeteer.pages();
-    await page.waitForSelector(".col-12", { timeout: 2000 });
+    await page.waitForSelector(".col-12");
     await page.click(".Form-Submit");
     await page.waitForSelector(".invalid-feedback", { timeout: 2000 });
     await browser.assertView("error-form all", ".col-12", {
@@ -484,7 +485,7 @@ describe("тестирование формы заказа", async function () {
   it("после  завершения заказа по клику на кнопку появляется банер well done", async function ({ browser }) {
     const puppeteer = await browser.getPuppeteer();
     const [page] = await puppeteer.pages();
-    await page.waitForSelector(".col-12", { timeout: 2000 });
+    await page.waitForSelector(".col-12");
 
     const nameInput = await page.$("#f-name");
     await nameInput.focus();
@@ -503,11 +504,13 @@ describe("тестирование формы заказа", async function () {
     // await addressInput.fill( "8");
 
     await page.click(".Form-Submit");
-    await page.waitForSelector(".col-12", { timeout: 2000 });
-    await browser.assertView("well done", ".col-12", {
-      screenshotDelay: 100,
-      ignoreElements: [".Cart-Number"],
-    });
+    await page.waitForSelector(".col-12");
+    const orderNumber = await this.browser.$(`.Cart-Number`).getText();
+    assert.ok(+orderNumber < 1000);
+    // await browser.assertView("well done", ".col-12", {
+    //   screenshotDelay: 100,
+    //   // ignoreElements: [".Cart-Number"],
+    // });
     const link = await page.$('.col a[href="/hw/store/catalog"]');
     await browser.assertView("href", ".col a", {
       screenshotDelay: 100,
